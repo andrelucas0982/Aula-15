@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-FILE *abertura(const char *nome_arquivo);
+int abertura(FILE * arquivo);
 void retangulo(FILE *pArquivo);
 void circulo(FILE *pArquivo);
 void linha(FILE *pArquivo);
@@ -19,12 +19,16 @@ int main(void) {
             break;
         }
 
-        FILE *pArquivo = abertura(nome);
+        FILE *pArquivo = NULL;
+        pArquivo = fopen(nome, "w");
+
         if (pArquivo == NULL) {
             printf("Erro ao criar/abrir o arquivo.\n");
             continue;
         }
+    
 
+        fprintf(pArquivo, "<svg version='1.1' width='300' height='200' xmlns='http://www.w3.org/2000/svg'>");
         retangulo(pArquivo);
         circulo(pArquivo);
         linha(pArquivo);
@@ -37,15 +41,27 @@ int main(void) {
     return 0;
 }
 
-FILE *abertura(const char *nome_arquivo) {
-    FILE *arquivo = fopen(nome_arquivo, "w");
-    if (arquivo == NULL) {
-        return NULL;
+int abertura(FILE * arquivo) {
+    int retorno = fprintf(arquivo, "<svg version=\"1.1\" ");
+
+    if (retorno < 0) {
+      return 0;
     }
 
-    fprintf(arquivo, "<svg version=\"1.1\" width=\"300\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\">\n");
-    return arquivo;
-}
+    retorno = fprintf(arquivo, "width=\"300\" height=\"200\" ");
+
+    if (retorno < 0) {
+      return 0;
+    }
+
+    retorno = fprintf(arquivo, "xmlns=\"http://www.w3.org/2000/svg\">");
+
+    if (retorno < 0) {
+      return 0;
+    }
+
+    return 1;
+  }
 
 void retangulo(FILE *pArquivo) {
     int x, y, largura, altura;
@@ -72,7 +88,7 @@ void circulo(FILE *pArquivo) {
     printf("Digite o raio do circulo: ");
     scanf("%d", &raio);
 
-    fprintf(pArquivo, "  <circle cx=\"%d\" cy=\"%d\" r=\"%d\" fill=\"blue\" />\n", x, y, raio);
+    fprintf(pArquivo, "  <circle cx=\"%d\" cy=\"%d\" r=\"%d\" fill=\"blue\" />\n", x, y, raio); 
 }
 
 void linha(FILE *pArquivo) {
