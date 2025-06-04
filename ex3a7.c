@@ -1,207 +1,117 @@
 #include <stdio.h>
 #include <string.h>
 
+FILE *abertura(const char *nome_arquivo);
+void retangulo(FILE *pArquivo);
+void circulo(FILE *pArquivo);
+void linha(FILE *pArquivo);
+void texto(FILE *pArquivo);
+void fechamento(FILE *pArquivo);
 
-int abertura(FILE * arquivo);
-int retangulo(void);
-int circulo(void);
-int linha(void);
-int texto(void);
+int main(void) {
+    char nome[50] = "";
 
+    while (1) {
+        printf("Digite o nome do arquivo ou F para sair: ");
+        scanf("%s", nome);
 
-int main(void){
+        if (strcmp(nome, "F") == 0) {
+            break;
+        }
 
-   char funcao[50] = "";
-   
-   while(1){
+        FILE *pArquivo = abertura(nome);
+        if (pArquivo == NULL) {
+            printf("Erro ao criar/abrir o arquivo.\n");
+            continue;
+        }
 
-    printf("Escolha a função que deseja executar (Retangulo, Circulo, Linha, Texto) ou F para sair: ");
-    scanf("%s", funcao);
-    
-    if(strcmp(funcao, "Retangulo") == 0){
-        retangulo();
-    }else if(strcmp(funcao, "Circulo") == 0){
-        circulo();
-    }else if(strcmp(funcao, "Linha") == 0){
-        linha();
-    }else if(strcmp(funcao, "Texto") == 0){
-        texto();
+        retangulo(pArquivo);
+        circulo(pArquivo);
+        linha(pArquivo);
+        texto(pArquivo);
+
+        fechamento(pArquivo);
+        fclose(pArquivo);
     }
-    
-   if(strcmp(funcao, "F") == 0){
-        break;
-    }
-   }
 
     return 0;
-
 }
 
-int abertura(FILE * arquivo) {
-    int retorno = fprintf(arquivo, "<svg version=\"1.1\" ");
-
-    if (retorno < 0) {
-      return 0;
+FILE *abertura(const char *nome_arquivo) {
+    FILE *arquivo = fopen(nome_arquivo, "w");
+    if (arquivo == NULL) {
+        return NULL;
     }
 
-    retorno = fprintf(arquivo, "width=\"300\" height=\"200\" ");
+    fprintf(arquivo, "<svg version=\"1.1\" width=\"300\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\">\n");
+    return arquivo;
+}
 
-    if (retorno < 0) {
-      return 0;
-    }
+void retangulo(FILE *pArquivo) {
+    int x, y, largura, altura;
 
-    retorno = fprintf(arquivo, "xmlns=\"http://www.w3.org/2000/svg\">");
-
-    if (retorno < 0) {
-      return 0;
-    }
-
-    return 1;
-  }
-
-int retangulo(void){
-
-    char nome[50] = "";
-    int x = 0;
-    int y = 0;
-    int largura = 0;
-    int altura = 0;
-
-     FILE *pArquivo = NULL;
-
-    printf("Digite o nome do arquivo do retangulo: ");
-    scanf("%s", nome);
     printf("Digite a posicao X de um retangulo: ");
     scanf("%d", &x);
     printf("Digite a posicao Y de um retangulo: ");
     scanf("%d", &y);
-    printf("Digite  a largura (width) do retangulo: ");
+    printf("Digite a largura (width) do retangulo: ");
     scanf("%d", &largura);
     printf("Digite a altura (height) do retangulo: ");
     scanf("%d", &altura);
 
-    
-    pArquivo = fopen(nome, "w");
+    fprintf(pArquivo, "  <rect x=\"%d\" y=\"%d\" width=\"%d\" height=\"%d\" fill=\"red\" />\n", x, y, largura, altura);
+}
 
-     if (pArquivo == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return 1;
-    }
+void circulo(FILE *pArquivo) {
+    int x, y, raio;
 
-    abertura(pArquivo);
-    fprintf(pArquivo, "<rect x='%d' y='%d' width='%d' height='%d' fill='red' />", x, y, largura, altura);
-    fprintf(pArquivo, "</svg>");
-
-    fclose(pArquivo);
-
-    return 0;}
-int circulo(void){
-
-
-    char nome[50] = "";
-    int x = 0;
-    int y = 0;
-    int raio = 0;
-
-    FILE *pArquivo = NULL;
-
-    printf("Digite o nome do arquivo do circulo: ");
-    scanf("%s", nome);
     printf("Digite o centro do circulo na posicao X: ");
     scanf("%d", &x);
     printf("Digite o centro do circulo na posicao Y: ");
     scanf("%d", &y);
-    printf("Digite  o raio do circulo: ");
+    printf("Digite o raio do circulo: ");
     scanf("%d", &raio);
 
-    
-    pArquivo = fopen(nome, "w");
+    fprintf(pArquivo, "  <circle cx=\"%d\" cy=\"%d\" r=\"%d\" fill=\"blue\" />\n", x, y, raio);
+}
 
-     if (pArquivo == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return 1;
-    }
+void linha(FILE *pArquivo) {
+    int x1, y1, x2, y2;
+    char cor[50] = "";
 
-    abertura(pArquivo);
-    fprintf(pArquivo, "<circle cx='%d' cy='%d' r='%d'/>", x, y, raio);
-    fprintf(pArquivo, "</svg>");
-    fclose(pArquivo);
+    printf("Digite a posicao inicial X da linha: ");
+    scanf("%d", &x1);
+    printf("Digite a posicao inicial Y da linha: ");
+    scanf("%d", &y1);
+    printf("Digite a posicao final X da linha: ");
+    scanf("%d", &x2);
+    printf("Digite a posicao final Y da linha: ");
+    scanf("%d", &y2);
+    printf("Digite a cor da linha: ");
+    scanf("%s", cor);
 
-    return 0;}
+    fprintf(pArquivo, "  <line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"%s\" stroke-width=\"2\" />\n", x1, y1, x2, y2, cor);
+}
 
-int linha(void){
-
-    char nome[50] = "";
-    int x = 0;
-    int y = 0;
-    int largura = 0;
-    int altura = 0;
-
-     FILE *pArquivo = NULL;
-
-    printf("Digite o nome do arquivo da linha: ");
-    scanf("%s", nome);
-    printf("Digite a posicao X da linha: ");
-    scanf("%d", &x);
-    printf("Digite a posicao Y da  linha: ");
-    scanf("%d", &y);
-    printf("Digite  a largura (width) da linha: ");
-    scanf("%d", &largura);
-
-    
-    pArquivo = fopen(nome, "w");
-
-     if (pArquivo == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return 1;
-    }
-
-    abertura(pArquivo);
-    fprintf(pArquivo, "<rect x='%d' y='%d' width='%d' height='1' fill='red' />", x, y, largura);
-    fprintf(pArquivo, "</svg>");
-
-    fclose(pArquivo);
-
-    return 0;}
-
-int texto(void) {
-
-    char nome[50] = "";
-    int x = 0;
-    int y = 0;
+void texto(FILE *pArquivo) {
+    int x, y, tamanho;
     char cor[50] = "";
     char texto[50] = "";
-    int tamanho = 0;
 
-     FILE *pArquivo = NULL;
-
-    printf("Digite o nome do arquivo do texto: ");
-    scanf("%s", nome);
     printf("Digite o texto do arquivo: ");
     scanf("%s", texto);
     printf("Digite a posicao X do texto: ");
     scanf("%d", &x);
     printf("Digite a posicao Y do texto: ");
     scanf("%d", &y);
-    printf("Digite  a cor do texto em ingles: ");
+    printf("Digite a cor do texto em ingles: ");
     scanf("%s", cor);
     printf("Digite o tamanho do texto: ");
     scanf("%d", &tamanho);
 
-    
-    pArquivo = fopen(nome, "w");
+    fprintf(pArquivo, "  <text x=\"%d\" y=\"%d\" fill=\"%s\" font-size=\"%d\">%s</text>\n", x, y, cor, tamanho, texto);
+}
 
-     
-
-    if (pArquivo == NULL) {
-        printf("Erro: Arquivo não aberto.\n");
-        return 0;
-    }
-    abertura(pArquivo);
-    fprintf(pArquivo, "<text x='%d' y='%d' fill='%s' font-size='%d'>%s</text>\n", x, y, cor, tamanho, texto);
-    fprintf(pArquivo, "</svg>");
-    fclose(pArquivo);
-
-
-    return 0;
+void fechamento(FILE *pArquivo) {
+    fprintf(pArquivo, "</svg>\n");
 }
